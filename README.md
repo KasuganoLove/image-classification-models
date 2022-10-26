@@ -1,6 +1,6 @@
 # image-classification-models
 
-#### Introduction
+### Introduction
 image-classification-models:include resnet,vgg,alexnet,densnet
 
 ### Tensorboard
@@ -9,7 +9,7 @@ I use tensorboard to store the results.You can see the results by tesnsorboard a
 ### Best Accurracy model
 The models with best valid_acc are saved as runs/{model}/checkpoint.pth.See more information in source code.
 
-#### Datasets
+### Datasets
 the datasets should be like cifar10
 you should change the dir by change the source code at {model}-train.py
 
