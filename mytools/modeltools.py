@@ -39,7 +39,7 @@ class modelTool:
             """ Resnet
             """
             num_ftrs = model_ft.fc.in_features
-            model_ft.fc = nn.Sequential(nn.Linear(num_ftrs, 102),
+            model_ft.fc = nn.Sequential(nn.Linear(num_ftrs, num_classes),
                                         nn.LogSoftmax(dim=1))
             input_size = 224
 
@@ -48,6 +48,7 @@ class modelTool:
             """
             num_ftrs = model_ft.classifier[6].in_features
             model_ft.classifier[6] = nn.Linear(num_ftrs, num_classes)
+            model_ft.classifier.append(nn.LogSoftmax(dim=1))
             input_size = 224
 
         elif model_name == "vgg":
@@ -55,13 +56,15 @@ class modelTool:
             """
             num_ftrs = model_ft.classifier[6].in_features
             model_ft.classifier[6] = nn.Linear(num_ftrs, num_classes)
+            model_ft.classifier.append(nn.LogSoftmax(dim=1))
             input_size = 224
 
         elif model_name == "densenet":
             """ Densenet
             """
             num_ftrs = model_ft.classifier.in_features
-            model_ft.classifier = nn.Linear(num_ftrs, num_classes)
+            model_ft.classifier = nn.Sequential(nn.Linear(num_ftrs, num_classes),
+                                        nn.LogSoftmax(dim=1))
             input_size = 224
 
         else:
@@ -79,7 +82,7 @@ class modelTool:
                 updatable_params.append(param)
         return updatable_params_names, updatable_params
 
-    def train_model(self, model, dataloaders, filename, writer, num_epochs=300, epoch_shift=0, lr_start=1e-2):
+    def train_model(self, model, dataloaders, filename, writer, num_epochs=300, epoch_shift=0, lr_start=1e-2, device = "0"):
         # 优化器设置
         optimizer = optim.Adam(model.parameters(), lr=lr_start)
         # 学习率每7个epoch衰减成原来的1/10
@@ -99,7 +102,7 @@ class modelTool:
         else:
             print('CUDA is available!  Training on GPU ...')
 
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cuda:{}".format(device) if torch.cuda.is_available() else "cpu")
 
         since = time.time()
         best_acc = 0

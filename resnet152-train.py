@@ -4,9 +4,17 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import torch
 from torchvision import transforms, models, datasets
 from torch.utils.tensorboard import SummaryWriter
+import argparse 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--device', type=str, default="0")
+
+
+args = parser.parse_args()
+device = args.device
 
 # 路径设置
-data_dir = './flower_data/'
+data_dir = './scrapsteel/'
 train_dir = data_dir + '/train'
 valid_dir = data_dir + '/valid'
 
@@ -30,7 +38,7 @@ data_transforms = {
 }
 
 # 数据读取，batch_size设置，获取分类任务类别个数
-batch_size = 4
+batch_size = 32
 
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x]) for x in ['train', 'valid']}
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batch_size, shuffle=True) for x in
@@ -67,7 +75,8 @@ writer.add_graph(model_ft, input_to_model=inputs, verbose=False)
 model_ft, val_acc_history, train_acc_history, valid_losses, train_losses, LRs = tool.train_model(model_ft, dataloaders,
                                                                                                  filename = filename,
                                                                                                  writer= writer,
-                                                                                                 num_epochs=300,
+                                                                                                 num_epochs=150,
                                                                                                  epoch_shift=0,
-                                                                                                 lr_start=1e-2)
+                                                                                                 lr_start=1e-2,
+                                                                                                 device=device)
 writer.close()

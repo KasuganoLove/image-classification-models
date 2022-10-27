@@ -5,9 +5,17 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import torch
 from torchvision import transforms, models, datasets
 from torch.utils.tensorboard import SummaryWriter
+import argparse 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--device', type=str, default="0")
+
+
+args = parser.parse_args()
+device = args.device
 
 # 路径设置
-data_dir = './flower_data/'
+data_dir = './scrapsteel/'
 train_dir = data_dir + '/train'
 valid_dir = data_dir + '/valid'
 
@@ -70,34 +78,35 @@ writer.add_graph(model_ft, input_to_model=inputs, verbose=False)
 model_ft, val_acc_history, train_acc_history, valid_losses, train_losses, LRs = tool.train_model(model_ft, dataloaders,
                                                                                                  filename=filename,
                                                                                                  writer=writer,
-                                                                                                 num_epochs=50,
+                                                                                                 num_epochs=150,
                                                                                                  epoch_shift=0,
-                                                                                                 lr_start=1e-2)
+                                                                                                 lr_start=1e-2,
+                                                                                                 device=device)
 writer.close()
 
-# Load the checkpoint
-checkpoint = torch.load('./runs/resnet152/f_fc_checkpoint.pth')
-best_acc = checkpoint['best_acc']
-print(best_acc)
-model_ft.load_state_dict(checkpoint['state_dict'])
-epoch_shift = checkpoint['epoch']
+# # Load the checkpoint
+# checkpoint = torch.load('./runs/resnet152/f_fc_checkpoint.pth')
+# best_acc = checkpoint['best_acc']
+# print(best_acc)
+# model_ft.load_state_dict(checkpoint['state_dict'])
+# epoch_shift = checkpoint['epoch']
 
-# 解冻模型
-tool.unfreeze_module(model_ft)
+# # 解冻模型
+# tool.unfreeze_module(model_ft)
 
-# 模型保存路径
-filename = "./runs/resnet/f_all_checkpoint.pth"
-writer = SummaryWriter(log_dir="./runs/resnet152/freeze_train/all_train", flush_secs=25)  # tesnsorboard可视化文件
+# # 模型保存路径
+# filename = "./runs/resnet/f_all_checkpoint.pth"
+# writer = SummaryWriter(log_dir="./runs/resnet152/freeze_train/all_train", flush_secs=25)  # tesnsorboard可视化文件
 
-# 是否训练所有层
-updatable_params_names, updatable_params = tool.get_updatable_params(model_ft)
-print("Params to learn:")
-print(updatable_params_names)
+# # 是否训练所有层
+# updatable_params_names, updatable_params = tool.get_updatable_params(model_ft)
+# print("Params to learn:")
+# print(updatable_params_names)
 
-# 开始训练！
-model_ft, val_acc_history, train_acc_history, valid_losses, train_losses, LRs = tool.train_model(model_ft, dataloaders,
-                                                                                                 filename=filename,
-                                                                                                 writer=writer,
-                                                                                                 num_epochs=25,
-                                                                                                 epoch_shift=epoch_shift,
-                                                                                                 lr_start=1e-2)
+# # 开始训练！
+# model_ft, val_acc_history, train_acc_history, valid_losses, train_losses, LRs = tool.train_model(model_ft, dataloaders,
+#                                                                                                  filename=filename,
+#                                                                                                  writer=writer,
+#                                                                                                  num_epochs=25,
+#                                                                                                  epoch_shift=epoch_shift,
+#                                                                                                  lr_start=1e-2)
