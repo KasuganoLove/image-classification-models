@@ -5,6 +5,17 @@ image-classification-models, include :
     
     resnet50, resnet152, vgg, alexnet, densnet
 
+## Initialization
+You have to make some dirs, by :
+    
+    mkdir runs
+    cd runs
+    mkdir alexnet
+    mkdir densenet
+    mkdir resnet50
+    mkdir resnet152
+    mkdir vgg
+
 ## Tensorboard
 I use tensorboard to store the results.You can see the results by tesnsorboard at runs/{model}/train or simply set the logdir as ./runs
 
