@@ -48,6 +48,7 @@ you can download our experiment dataset through :
 you can simply use cmd to run :
     
     python {model}-train.py
+    python {model}-train.py --epoch=300
 
 ## Freeze Train
 Dataset too small ? 

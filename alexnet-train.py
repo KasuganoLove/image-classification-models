@@ -9,11 +9,13 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--device', type=str, default="0")
 parser.add_argument('--freeze', action="store_true")
+parser.add_argument('--epoch', type=int, default=300)
 
 
 args = parser.parse_args()
 device = args.device
 freeze = args.freeze
+epoch = args.epoch
 
 
 # 路径设置
@@ -41,9 +43,14 @@ data_transforms = {
 }
 
 # 数据读取，batch_size设置，获取分类任务类别个数
-batch_size = 64
+batch_size = 16
 
-image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x]) for x in ['train', 'valid']}
+# CIFAR 10
+image_datasets = dict()
+image_datasets['train'] = datasets.CIFAR10(root=r'./data', train=True, transform=data_transforms['train'], download=True)
+image_datasets['valid'] = datasets.CIFAR10(root=r'./data', train=False, transform=data_transforms['valid'], download=True)
+
+# image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x]) for x in ['train', 'valid']}
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batch_size, shuffle=True) for x in
                ['train', 'valid']}
 # dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'valid']}
@@ -81,7 +88,7 @@ writer.add_graph(model_ft, input_to_model=inputs, verbose=False)
 model_ft, val_acc_history, train_acc_history, valid_losses, train_losses, LRs = tool.train_model(model_ft, dataloaders,
                                                                                                  filename = filename,
                                                                                                  writer= writer,
-                                                                                                 num_epochs=150,
+                                                                                                 num_epochs=epoch,
                                                                                                  epoch_shift=0,
                                                                                                  lr_start=1e-2,
                                                                                                  device=device)

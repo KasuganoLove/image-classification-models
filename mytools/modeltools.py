@@ -47,24 +47,35 @@ class modelTool:
             """ Alexnet
             """
             num_ftrs = model_ft.classifier[6].in_features
-            model_ft.classifier[6] = nn.Linear(num_ftrs, num_classes)
-            model_ft.classifier.append(nn.LogSoftmax(dim=1))
+            model_ft.classifier = nn.Sequential(
+                                            nn.Dropout(p=0.5, inplace=False),
+                                            nn.Linear(in_features=9216, out_features=4096, bias=True),
+                                            nn.ReLU(inplace=True),
+                                            nn.Dropout(p=0.5, inplace=False),
+                                            nn.Linear(in_features=4096, out_features=4096, bias=True),
+                                            nn.ReLU(inplace=True),
+                                            nn.Linear(num_ftrs, num_classes))
             input_size = 224
 
         elif model_name == "vgg":
             """ VGG11_bn
             """
             num_ftrs = model_ft.classifier[6].in_features
-            model_ft.classifier[6] = nn.Linear(num_ftrs, num_classes)
-            model_ft.classifier.append(nn.LogSoftmax(dim=1))
+            model_ft.classifier = nn.Sequential(
+                                            nn.Linear(in_features=25088, out_features=4096, bias=True),
+                                            nn.ReLU(inplace=True),
+                                            nn.Dropout(p=0.5, inplace=False),
+                                            nn.Linear(in_features=4096, out_features=4096, bias=True),
+                                            nn.ReLU(inplace=True),
+                                            nn.Dropout(p=0.5, inplace=False),
+                                            nn.Linear(num_ftrs, num_classes))
             input_size = 224
 
         elif model_name == "densenet":
             """ Densenet
             """
             num_ftrs = model_ft.classifier.in_features
-            model_ft.classifier = nn.Sequential(nn.Linear(num_ftrs, num_classes),
-                                        nn.LogSoftmax(dim=1))
+            model_ft.classifier = nn.Linear(num_ftrs, num_classes)
             input_size = 224
 
         else:
@@ -82,17 +93,20 @@ class modelTool:
                 updatable_params.append(param)
         return updatable_params_names, updatable_params
 
-    def train_model(self, model, dataloaders, filename, writer, num_epochs=300, epoch_shift=0, lr_start=1e-2, device = "0"):
+    def train_model(self, model, dataloaders, filename, writer, model_name="default", num_epochs=300, epoch_shift=0, lr_start=1e-2, device="0"):
         # 优化器设置
-        optimizer = optim.Adam(model.parameters(), lr=lr_start)
+        optimizer = optim.SGD(model.parameters(), lr=lr_start)
         # 学习率每7个epoch衰减成原来的1/10
         # scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
         # 余弦退火有序调整学习率
         # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100)
         # ReduceLROnPlateau（自适应调整学习率）
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min')
-        # 损失函数
-        criterion = nn.NLLLoss()
+        if model_name == "resnet":
+            # 损失函数
+            criterion = nn.NLLLoss()
+        else:
+            criterion = nn.CrossEntropyLoss()
 
         # 是否用GPU训练
         train_on_gpu = torch.cuda.is_available()
