@@ -1,8 +1,18 @@
 from mytools.filetools import fileTool
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--model', type=str, default="all")
+
+
+args = parser.parse_args()
+model = args.model
 
 tool = fileTool()
-tool.del_file("./runs/alexnet")
-tool.del_file("./runs/vgg")
-tool.del_file("./runs/resnet50")
-tool.del_file("./runs/resnet152")
-tool.del_file("./runs/densenet")
+
+if model=="all":
+    tool.del_file("./runs")
+
+else:
+    tool.del_file("./runs/{}".format(model))
+

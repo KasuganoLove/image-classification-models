@@ -17,10 +17,16 @@ You have to make some dirs, by :
     mkdir vgg
 
 ## Tensorboard
-I use tensorboard to store the results.You can see the results by tesnsorboard at runs/{model}/train or simply set the logdir as ./runs
+I use tensorboard to store the results.
+
+You can see the results by tesnsorboard at runs/{model}/train or simply set the logdir as ./runs:
+
+    tensorboard --logdir="./runs"
 
 ## Best Accurracy model
-The models with best valid_acc are saved as runs/{model}/checkpoint.pth.See more information in source code.
+The models which have the best valid_acc are saved as runs/{model}/checkpoint.pth.
+
+See more information in source code.
 
 ## Datasets
 the datasets should be like cifar10
@@ -48,13 +54,14 @@ Dataset too small ?
 
 You can freeze all parameters and only train the fully connected layer by :    
 
-    python {model}-freezetrain.py
+    python {model}-train.py --freeze
 
 ## Clean
 So many train logs,what a messy !
-use clean.py to clean up .runs/{all models} !
+Use clean.py to clean up ./runs or ./runs/{model} !
     
     python clean.py
+    python clean.py --model alexnet
 
 ## Device
 You can choose your cuda device by using --device, for example:

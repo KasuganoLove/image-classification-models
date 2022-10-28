@@ -8,10 +8,12 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--device', type=str, default="0")
+parser.add_argument('--freeze', action="store_true")
 
 
 args = parser.parse_args()
 device = args.device
+freeze = args.freeze
 
 # 路径设置
 data_dir = './scrapsteel/'
@@ -53,6 +55,9 @@ model = models.vgg19(weights=weights)
 
 # 初始化模型
 tool = modelTool()
+if freeze:
+    # 冻住模型
+    tool.freeze_module(model)
 model_ft, input_size = tool.initialize_model("vgg", model, num_classes)
 
 # 模型保存路径
@@ -80,3 +85,5 @@ model_ft, val_acc_history, train_acc_history, valid_losses, train_losses, LRs = 
                                                                                                  lr_start=1e-2,
                                                                                                  device=device)
 writer.close()
+
+exit()
