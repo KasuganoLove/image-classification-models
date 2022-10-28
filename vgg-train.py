@@ -17,8 +17,6 @@ freeze = args.freeze
 
 # 路径设置
 data_dir = './scrapsteel/'
-train_dir = data_dir + '/train'
-valid_dir = data_dir + '/valid'
 
 # 数据增强模块定义
 data_transforms = {

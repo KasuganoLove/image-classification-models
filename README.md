@@ -29,16 +29,16 @@ The models which have the best valid_acc are saved as runs/{model}/checkpoint.pt
 See more information in source code.
 
 ## Datasets
-the datasets should be like cifar10
+the datasets should be like cifar10:
+
+    ——dataset_name
+        ——train
+        ——valid
+
+
 you should change the dir by change the source code at {model}-train.py
 
-the codes is like:
-
     data_dir = './scrapsteel/'
-
-    train_dir = data_dir + '/train'
-
-    valid_dir = data_dir + '/valid'
 
 you can download our experiment dataset through :
 
